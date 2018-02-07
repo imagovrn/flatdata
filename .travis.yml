@@ -14,8 +14,19 @@ env:
 script:
   - |
     docker run -t \
+      --user `id -u $USER` \
       -e C_COMPILER=${C_COMPILER} \
       -e CXX_COMPILER=${CXX_COMPILER} \
       -v $(pwd):/src \
+      -v $(pwd)/build:/build \
       -w /build \
       boxdot/flatdata-dev /src/ci/build-and-test.sh
+
+deploy:
+  provider: pages
+  local-dir: build/docs/html
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN
+  keep-history: true
+  on:
+    branch: sphinx_ci
